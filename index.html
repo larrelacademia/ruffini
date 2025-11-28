@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <title>Regla de Ruffini – Simulador amb caselles</title>
+  <style>
+    :root {
+      --bg: #0b1226;
+      --panel: #0e1530;
+      --accent: #60a5fa;
+      --accent2: #34d399;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+      --border: #334155;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top, #111827 0, #020617 40%);
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      padding: 16px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.95);
+      border-radius: 16px;
+      padding: 20px 24px 24px;
+      max-width: 950px;
+      width: 100%;
+      box-shadow: 0 20px 45px rgba(0,0,0,0.5);
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    h1 span {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, var(--accent2), var(--accent));
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #0b1120;
+    }
+    .subtitle {
+      margin: 0 0 16px;
+      font-size: 0.9rem;
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 2.3fr) minmax(0, 2.4fr);
+      gap: 20px;
+    }
+    @media (max-width: 900px) {
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    label {
+      display: block;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+    input[type="number"] {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border 0.15s, box-shadow 0.15s, background 0.15s;
+    }
+    input[type="number"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(96,165,250,0.6);
+      background: #020617;
+    }
+    .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .degree-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .degree-row small {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .coef-grid-wrapper {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(15,23,42,0.9);
+      border: 1px solid var(--border);
+    }
+    .coef-grid-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .coef-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .coef-item {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      min-width: 70px;
+      max-width: 90px;
+      flex: 1 1 70px;
+    }
+    .coef-item span.power-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 2px;
+      text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 1.3em;
+    }
+
+    .btn-row {
+      margin-top: 12px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    button {
+      border-radius: 999px;
+      border: none;
+      padding: 8px 18px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform 0.08s ease-out, box-shadow 0.12s ease-out, background 0.15s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #3b82f6);
+      color: #0b1120;
+      box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+    }
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px rgba(37, 99, 235, 0.45);
+    }
+    .btn-secondary {
+      background: #020617;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover {
+      background: #020617;
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.78rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(15, 118, 110, 0.18);
+      color: #6ee7b7;
+      margin-bottom: 8px;
+    }
+
+    .results {
+      border-radius: 12px;
+      padding: 12px 14px 10px;
+      background: radial-gradient(circle at top left, rgba(56,189,248,0.18), rgba(15,23,42,0.95));
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      min-height: 80px;
+      font-size: 0.9rem;
+    }
+    .results h2 {
+      font-size: 0.95rem;
+      margin: 0 0 6px;
+      color: var(--muted);
+      font-weight: 600;
+    }
+    .poly-line {
+      margin: 2px 0;
+      font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 0.9rem;
+      word-wrap: break-word;
+    }
+    .poly-line span.label {
+      color: var(--muted);
+    }
+    .poly-line span.value {
+      color: #f9fafb;
+    }
+    .poly-line span.emph {
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    .ruffini-wrapper {
+      margin-top: 10px;
+      overflow-x: auto;
+    }
+    table.ruffini {
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 6px;
+      font-size: 0.85rem;
+      min-width: min(100%, 540px);
+    }
+    table.ruffini th,
+    table.ruffini td {
+      padding: 4px 8px;
+      text-align: center;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15, 23, 42, 0.88);
+      min-width: 40px;
+    }
+    table.ruffini th {
+      background: rgba(15, 23, 42, 0.95);
+      font-weight: 600;
+      color: var(--muted);
+    }
+    table.ruffini td.corner {
+      background: #020617;
+      font-weight: 600;
+      color: var(--muted);
+      min-width: 50px;
+    }
+    table.ruffini td.root {
+      background: rgba(30, 64, 175, 0.85);
+      font-weight: 700;
+      color: #e5e7eb;
+    }
+    table.ruffini tr.result-row td {
+      background: rgba(21, 128, 61, 0.3);
+    }
+    table.ruffini tr.mult-row td {
+      background: rgba(30, 64, 175, 0.18);
+    }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      border-radius: 999px;
+      background: rgba(148, 163, 184, 0.18);
+      color: var(--muted);
+      margin-left: 6px;
+    }
+
+    .error {
+      margin-top: 8px;
+      font-size: 0.82rem;
+      color: var(--danger);
+      min-height: 1em;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>
+      <span>R</span>
+      Regla de Ruffini – Divisió de polinomis
+    </h1>
+    <p class="subtitle">
+      Tria el grau del polinomi, omple els coeficients a les caselles i el valor de <strong>a</strong> al divisor
+      <strong>(x-a)</strong>. El programa mostra la taula de Ruffini, el quocient i el residu.
+    </p>
+
+    <div class="grid">
+      <!-- Panell d'entrada -->
+      <div>
+        <div class="pill">
+          ⚙️ Configuració del polinomi
+        </div>
+
+        <form id="ruffini-form">
+          <div class="degree-row">
+            <div style="max-width: 120px;">
+              <label for="degree">Grau del polinomi</label>
+              <input id="degree" type="number" min="1" max="10" value="4">
+            </div>
+            <button type="button" id="btn-update-coefs" class="btn-secondary">
+              Actualitza caselles
+            </button>
+            <small>
+              El polinomi tindrà la forma
+              <em>a<sub>n</sub>x<sup>n</sup> + … + a<sub>1</sub>x + a<sub>0</sub></em>.
+            </small>
+          </div>
+
+          <div class="coef-grid-wrapper">
+            <div class="coef-grid-label">
+              Coeficients (de grau més alt a terme independent):
+            </div>
+            <div id="coef-grid" class="coef-grid">
+              <!-- Caselles de coeficients generades per JS -->
+            </div>
+            <div class="hint">
+              Deixa <strong>0</strong> si algun terme falta (per exemple, si no hi ha x<sup>3</sup>).
+            </div>
+          </div>
+
+          <div style="margin-top: 12px;">
+            <label for="root">
+              Valor de <strong>a</strong> al divisor <strong>(x-a)</strong>
+            </label>
+            <input id="root" type="number" step="any" placeholder="Exemple: 2">
+            <div class="hint">
+              Si divideixes entre <code>(x−2)</code>, escriu <strong>2</strong>.  
+              Si divideixes entre <code>(x+3)</code>, escriu <strong>−3</strong>.
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button type="submit" class="btn-primary">
+              ➗ Aplicar Ruffini
+            </button>
+          </div>
+
+          <div id="error" class="error"></div>
+        </form>
+      </div>
+
+      <!-- Panell de resultats -->
+      <div>
+        <div class="pill">
+          📊 Resultats i taula de Ruffini
+        </div>
+        <div class="results" id="results">
+          <h2>En espera de dades…</h2>
+          <p style="margin: 4px 0 0;">
+            Tria el grau, omple els coeficients i el valor de <strong>a</strong> i prem
+            <strong>«Aplicar Ruffini»</strong>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function formatNumber(num) {
+      if (!isFinite(num)) return '∞';
+      if (Number.isInteger(num)) return num.toString();
+      return parseFloat(num.toFixed(4)).toString();
+    }
+
+    // Polinomi com a HTML, amb <sub> i <sup>
+    function formatPolynomial(coefs) {
+      // coefs: array des del coeficient de més grau fins al terme independent
+      const n = coefs.length - 1;
+      const parts = [];
+
+      coefs.forEach((coef, idx) => {
+        const power = n - idx;
+        if (Math.abs(coef) < 1e-12) return; // ometre coeficients ~0
+
+        const sign = coef < 0 ? '-' : '+';
+        const absCoef = Math.abs(coef);
+        let c = formatNumber(absCoef);
+
+        let term = '';
+        if (power === 0) {
+          term = c;
+        } else if (power === 1) {
+          if (Math.abs(absCoef - 1) < 1e-12) {
+            term = 'x';
+          } else {
+            term = c + 'x';
+          }
+        } else {
+          const sup = '<sup>' + power + '</sup>';
+          if (Math.abs(absCoef - 1) < 1e-12) {
+            term = 'x' + sup;
+          } else {
+            term = c + 'x' + sup;
+          }
+        }
+
+        parts.push({ sign, term });
+      });
+
+      if (parts.length === 0) return '0';
+
+      const first = parts[0];
+      let result = (first.sign === '-' ? '-' : '') + first.term;
+
+      for (let i = 1; i < parts.length; i++) {
+        result += ' ' + parts[i].sign + ' ' + parts[i].term;
+      }
+
+      return result;
+    }
+
+    function buildRuffiniTableHTML(coeffs, root, b, mults) {
+      // coeffs: a0..an (de més a menys grau)
+      // b: resultats de Ruffini (mateixa longitud que coeffs)
+      // mults: productes root * b[k] (índex 1..n)
+      const headers = coeffs
+        .map((_, i) => `<th>C<sub>${i}</sub></th>`)
+        .join('');
+      const coefRow = coeffs.map(c => `<td>${formatNumber(c)}</td>`).join('');
+
+      const multRow =
+        '<td class="corner">a·b</td>' +
+        '<td></td>' +
+        mults.slice(1).map(m => `<td>${formatNumber(m)}</td>`).join('');
+
+      const resultRow =
+        `<td class="root">${formatNumber(root)}</td>` +
+        b.map((val, idx) => {
+          const cls = (idx === b.length - 1) ? ' style="font-weight:700;"' : '';
+          return `<td${cls}>${formatNumber(val)}</td>`;
+        }).join('');
+
+      return `
+        <div class="ruffini-wrapper">
+          <table class="ruffini">
+            <tr>
+              <th class="corner">Taula</th>${headers}
+            </tr>
+            <tr>
+              <td class="corner">Coef.</td>${coefRow}
+            </tr>
+            <tr class="mult-row">
+              ${multRow}
+            </tr>
+            <tr class="result-row">
+              ${resultRow}
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+
+    function buildCoefInputs(degree) {
+      const grid = document.getElementById('coef-grid');
+      grid.innerHTML = '';
+      const deg = Math.max(1, Math.min(10, degree || 1));
+
+      for (let p = deg; p >= 0; p--) {
+        const item = document.createElement('div');
+        item.className = 'coef-item';
+
+        const label = document.createElement('span');
+        label.className = 'power-label';
+
+        if (p === 0) {
+          label.innerHTML = 'a<sub>0</sub>';
+        } else if (p === 1) {
+          label.innerHTML = 'a<sub>1</sub> · x';
+        } else {
+          label.innerHTML = `a<sub>${p}</sub> · x<sup>${p}</sup>`;
+        }
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.step = 'any';
+        input.value = '0';
+        input.className = 'coef-input';
+        input.dataset.power = p.toString();
+        input.placeholder = '0';
+
+        item.appendChild(label);
+        item.appendChild(input);
+        grid.appendChild(item);
+      }
+    }
+
+    document.getElementById('btn-update-coefs').addEventListener('click', function () {
+      const degVal = parseInt(document.getElementById('degree').value, 10);
+      buildCoefInputs(degVal);
+    });
+
+    // Inicialitza amb grau 4
+    buildCoefInputs(4);
+
+    document.getElementById('ruffini-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      const errorEl = document.getElementById('error');
+      const resultsEl = document.getElementById('results');
+      errorEl.textContent = '';
+
+      const degreeInput = document.getElementById('degree');
+      let deg = parseInt(degreeInput.value, 10);
+      if (isNaN(deg) || deg < 1) {
+        errorEl.textContent = 'Introdueix un grau vàlid (com a mínim 1).';
+        return;
+      }
+
+      const rootStr = document.getElementById('root').value.trim();
+      if (!rootStr && rootStr !== '0') {
+        errorEl.textContent = 'Introdueix el valor de a al divisor (x-a).';
+        return;
+      }
+
+      const coefInputs = Array.from(document.querySelectorAll('.coef-input'));
+      if (coefInputs.length < 2) {
+        errorEl.textContent = 'Falten caselles de coeficients. Actualitza el grau i torna-ho a provar.';
+        return;
+      }
+
+      // Recollim coeficients en ordre de grau més alt a 0
+      const coeffs = [];
+      coefInputs.sort((a, b) => parseInt(b.dataset.power) - parseInt(a.dataset.power));
+      for (let input of coefInputs) {
+        const valStr = input.value.trim();
+        const num = Number(valStr.replace(',', '.')) || 0;
+        if (!isFinite(num)) {
+          errorEl.textContent = 'Algun coeficient no és un nombre vàlid.';
+          return;
+        }
+        coeffs.push(num);
+      }
+
+      if (coeffs.length < 2) {
+        errorEl.textContent = 'Calen almenys dos coeficients (grau ≥ 1).';
+        return;
+      }
+
+      const root = Number(rootStr.replace(',', '.'));
+      if (Number.isNaN(root)) {
+        errorEl.textContent = 'El valor de a no és un nombre vàlid.';
+        return;
+      }
+
+      // Algorisme de Ruffini
+      const n = coeffs.length - 1;
+      const b = new Array(coeffs.length);
+      const mults = new Array(coeffs.length).fill(null);
+
+      b[0] = coeffs[0];
+      for (let i = 1; i <= n; i++) {
+        mults[i] = root * b[i - 1];
+        b[i] = coeffs[i] + mults[i];
+      }
+
+      const remainder = b[b.length - 1];
+      const quotientCoeffs = b.slice(0, -1);
+
+      const polyStr = formatPolynomial(coeffs);
+      const quotientStr = formatPolynomial(quotientCoeffs);
+      const remainderStr = formatNumber(remainder);
+      const quotientDegree = quotientCoeffs.length - 1;
+
+      const html = `
+        <h2>Divisió aplicada</h2>
+        <div class="poly-line">
+          <span class="label">Dividend:</span>
+          <span class="value">P(x) = ${polyStr}</span>
+        </div>
+        <div class="poly-line">
+          <span class="label">Divisor:</span>
+          <span class="value">x − ${formatNumber(root)}</span>
+        </div>
+        <div class="poly-line">
+          <span class="label">Quocient:</span>
+          <span class="value">Q(x) = ${quotientStr}</span>
+          <span class="tag">grau ${quotientDegree}</span>
+        </div>
+        <div class="poly-line">
+          <span class="label">Residu:</span>
+          <span class="emph">R = ${remainderStr}</span>
+        </div>
+        ${buildRuffiniTableHTML(coeffs, root, b, mults)}
+      `;
+
+      resultsEl.innerHTML = html;
+    });
+  </script>
+</body>
+</html>
