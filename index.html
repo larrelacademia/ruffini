@@ -35,6 +35,26 @@
       box-shadow: 0 20px 45px rgba(0,0,0,0.5);
       border: 1px solid rgba(148, 163, 184, 0.25);
     }
+
+    /* 🔹 Logo */
+    .logo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .logo-wrap img {
+      max-width: 180px;
+      width: 100%;
+      height: auto;
+      display: block;
+      opacity: 0.95;
+      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    }
+    .logo-wrap img:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
     h1 {
       margin: 0 0 8px;
       font-size: 1.4rem;
@@ -290,6 +310,17 @@
 </head>
 <body>
   <div class="card">
+
+    <!-- 🔹 Logo L'Arrel Acadèmia -->
+    <div class="logo-wrap">
+      <a href="https://www.larrelacademia.cat/" target="_blank" rel="noopener noreferrer">
+        <img
+          src="https://i.ibb.co/Q7YJTwgn/PRINCIPAL-BEIGE.png"
+          alt="L'Arrel Acadèmia - Logo"
+        />
+      </a>
+    </div>
+
     <h1>
       <span>R</span>
       Regla de Ruffini – Divisió de polinomis
