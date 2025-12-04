@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>Regla de Ruffini – Simulador amb caselles</title>
+  <!-- 🔹 Per fer-lo realment responsive al mòbil -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     :root {
       --bg: #0b1226;
@@ -305,6 +307,45 @@
       font-size: 0.82rem;
       color: var(--danger);
       min-height: 1em;
+    }
+
+    /* 🔹 Ajustos responsive mòbil / tablet */
+    @media (max-width: 768px) {
+      body {
+        align-items: flex-start;
+        padding: 12px;
+      }
+      .card {
+        padding: 16px 14px 18px;
+        border-radius: 12px;
+      }
+      h1 {
+        font-size: 1.15rem;
+        flex-wrap: wrap;
+      }
+      .subtitle {
+        font-size: 0.85rem;
+      }
+      .degree-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .degree-row > div {
+        width: 100%;
+        max-width: none;
+      }
+      .coef-item {
+        min-width: 60px;
+        flex: 1 1 60px;
+      }
+      .results {
+        margin-top: 10px;
+      }
+      table.ruffini {
+        font-size: 0.8rem;
+        min-width: 480px; /* es podrà fer scroll horitzontal si cal */
+      }
     }
   </style>
 </head>
