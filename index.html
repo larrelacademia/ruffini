@@ -23,6 +23,7 @@
       --danger: #ff3d78;      /* Fúcsia també per errors/avisos */
       --border: #5c3a93;      /* Morat per a contorns */
       --lila: #d5bef7;        /* Lila claret */
+      --muted: #6b7280;       /* Text suau peu de pàgina */
     }
 
     * { box-sizing: border-box; }
@@ -73,7 +74,8 @@
 
     /* 🔹 Logo final/imagotip */
     .logo-footer {
-      margin-top: 35px;
+      margin-top: 1px;
+      margin-bottom: 13px;
       display: flex;
       justify-content: center;
     }
@@ -88,6 +90,20 @@
     .logo-footer img:hover {
       opacity: 1;
       transform: translateY(-1px);
+    }
+
+    /* 🔹 Peu de pàgina amb línia separadora */
+    .footer {
+      margin-top: 20px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      padding-top: 10px;
+      min-height: 14px;
     }
 
     h1 {
@@ -425,6 +441,13 @@ table.ruffini tr.result-row td {
         min-width: 480px; /* es podrà fer scroll horitzontal si cal */
       }
     }
+
+    @media (max-width: 600px) {
+      .footer {
+        flex-direction: column;
+        font-size: 0.75rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -519,11 +542,19 @@ table.ruffini tr.result-row td {
       </div>
     </div>
 
+    <!-- 🔹 Peu de pàgina: línia separadora -->
+    <div class="footer"></div>
+
     <!-- 🔹 Logo final (imagotip) -->
     <div class="logo-footer">
       <a href="https://www.larrelacademia.cat/" target="_blank" rel="noopener noreferrer">
         <img src="https://i.ibb.co/PvJdJ31H/IMAGOTIP-FUCSIA.png" alt="L'Arrel Acadèmia - Imagotip fúcsia" />
       </a>
+    </div>
+
+    <!-- 🔹 Text legal del peu -->
+    <div style="text-align:center; margin-top:0; font-size:0.75rem; color:var(--muted);">
+      © 2025 L'Arrel Acadèmia · Simuladors educatius
     </div>
   </div>
 
@@ -685,7 +716,7 @@ table.ruffini tr.result-row td {
 
       const coefInputs = Array.from(document.querySelectorAll('.coef-input'));
       if (coefInputs.length < 2) {
-        errorEl.textContent = 'Falten caselles de coeficients. Actualitza el grau i torna-ho a provar.';
+        errorEl.textContent = 'Falten caselles de coeficients. Actualitza o tria de nou el grau i torna-ho a provar.';
         return;
       }
 
